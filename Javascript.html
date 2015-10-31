@@ -1,0 +1,77 @@
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script>
+
+  // var base_url = 'https://script.google.com/macros/s/AKfycbyHB9G5JiwFu7woXIkBQgas2dRe6_EP-yPdiKPuJqIM/dev';
+
+  $(function() { load_content(); });
+
+  function load_content() {
+    $('#main-heading').text('Loading...');
+    google.script.run
+       .withSuccessHandler(function(contents) {  // Respond to success conditions here.
+            updateDisplay(contents);
+            $('#id_add_folder_button').off('click').click(fun_add_folder);
+          })
+       .withFailureHandler(function(msg) {       // Respond to failure conditions here.
+            $('#error-message').text(msg).addClass("error").show();
+          })
+       .getFolderContents(folderId);
+  }
+
+
+  function updateDisplay(contents) {
+
+    $('#main-heading').empty();
+    $('#id_table1 tbody').empty();
+
+    // Display the path of the current folder
+    for (var t = 0; t + 1 < contents.folder_path.length; t++) {
+      $('#main-heading').append(' / '
+        + ' <span class="link_class" onclick="folderId=\'' + contents.folder_path[t].folder_ID + '\'; load_content();">'
+        // + '<a href="' + base_url + '?folderId=' + contents.folder_path[t].folder_ID + '" >'
+        + contents.folder_path[t].folder_name
+        + '</span>'
+      );
+    }
+    $('#main-heading').append(' / ' + contents.folder_path[contents.folder_path.length - 1].folder_name);
+
+    // Display the list of the folders
+    for (var t = 0; t < contents.folder_list.length; t++) {
+      $('#id_table1 tbody').append(
+        '<tr>'
+        + '<td>'
+        + ' <span class="link_class" onclick="folderId=\'' + contents.folder_list[t].folder_ID + '\'; load_content();">' + contents.folder_list[t].folder_name + '</span>'
+        + '</td>'
+        + '<td>' + contents.folder_list[t].folder_ID     + '</td>'
+        + '</tr>');
+    }
+
+    // Display the list of the files
+    for (var t = 0; t < contents.file_list.length; t++) {
+      $('#id_table1 tbody').append(
+        '<tr>'
+        + '<td> - ' + contents.file_list[t].file_name   + '</td>'
+        + '<td>'    + contents.file_list[t].file_ID     + '</td>'
+        + '</tr>');
+    }
+
+  }
+
+  function fun_add_folder() {
+    var fname = prompt("Folder name:", "New folder");
+    if ((fname != null) && (fname != '')) {
+      $('#id_add_folder_button').attr('disabled', 'true');
+      google.script.run
+         .withSuccessHandler(function() {
+              alert('New folder created');
+              load_content();
+              $('#id_add_folder_button').removeAttr('disabled')
+            })
+         .withFailureHandler(function(msg) {
+              $('#error-message').text(msg).addClass("error").show();
+            })
+         .addFolder(folderId, fname);
+    }
+  }
+
+</script>

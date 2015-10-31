@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!= HtmlService.createHtmlOutputFromFile('Stylesheet').getContent(); ?>
+    <script> var folderId = <?= folderId ?>; </script>
+    <?!= HtmlService.createHtmlOutputFromFile('JavaScript').getContent(); ?>
+  </head>
+
+  <body>
+
+    <input type="submit" id="id_add_folder_button" value="ADD NEW FOLDER"/>
+
+    <h1 id="main-heading">Loading...</h1>
+
+    <div class="block result-display" id="results">
+      <div class="hidden" id="error-message"> You have no permission </div>
+    </div>
+
+    <table id="id_table1" style="border: 1px solid #999999; padding: 3px; margin-top: 5px;">
+      <thead> <tr style="background-color: #AAAAAA;" >
+        <th style="width: 350px;"> File name </th>
+        <th style="width: 800px;"> File ID </th>
+      </tr> </thead>
+      <tbody> </tbody>
+    </table>
+
+  </body>
+</html>
